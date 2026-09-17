@@ -1,0 +1,44 @@
+services:
+
+  mysql:
+    image: mysql:8
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: airsense
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+   
+    restart: always
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DB: airsense
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root123
+
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ./frontend
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - backend
+
+volumes:
+  mysql-data:
