@@ -14,7 +14,7 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 sh '''
-                docker compose build
+                    docker compose build
                 '''
             }
         }
@@ -22,8 +22,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                docker compose down --remove-orphans || true
-                docker compose up -d --build
+                    docker compose down --remove-orphans || true
+                    docker compose up -d --build
                 '''
             }
         }
@@ -31,7 +31,25 @@ pipeline {
         stage('Verify Containers') {
             steps {
                 sh '''
-                docker ps
+                    docker ps
                 '''
             }
-        
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment Successful!'
+        }
+
+        failure {
+            echo 'Deployment Failed!'
+        }
+
+        always {
+            sh '''
+                docker ps -a || true
+            '''
+        }
+    }
+}
